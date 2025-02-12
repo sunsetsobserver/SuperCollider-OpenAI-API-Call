@@ -56,7 +56,3 @@ This repository contains a SuperCollider extension that encapsulates an API call
 This code is provided "as-is", without warranty of any kind. Use it at your own risk and ensure you manage your API key securely while complying with OpenAI's usage policies.
 
 Happy live-coding!
-
-```
-
-```
