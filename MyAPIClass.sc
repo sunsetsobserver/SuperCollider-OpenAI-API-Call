@@ -35,7 +35,6 @@ MyAPIClass : Object {
         answer = parsed["choices"][0]["message"]["content"];
 
         // Print and return the answer
-        "Answer:".postln;
         answer.postln;
         ^answer;
     }
