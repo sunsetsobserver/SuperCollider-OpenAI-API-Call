@@ -31,13 +31,28 @@ This repository contains a SuperCollider extension that encapsulates an API call
 
 5. **Using the Extension in Your SuperCollider Patch**
 
-   Once the classes have been recompiled, you can call the API from your SuperCollider code. For example:
+   Once the classes have been recompiled, you can asynchronously call the API from your SuperCollider code. For example:
 
    ```supercollider
-   (
-   var customPrompt = "Write a haiku that explains the concept of recursion in a fun way.";
-   var result = MyAPIClass.getResponse(customPrompt);
-   )
+(
+var customPrompt = "Write a haiku that explains the concept of recursion in a fun way.";
+
+MyAPIClass.getResponseAsync(customPrompt, { |response|
+    response.postln;
+
+    // You can now use this in a live coding context
+    Pdef(\aiMusic, 
+        Pbind(
+            \instrument, \default,
+            \degree, Pseq([0, 2, 4, 5, 7], inf),
+            \dur, 0.5,
+            \amp, 0.2
+        )
+    ).play;
+});
+)
+
+Pdef(\aiMusic).stop;
    ```
 
    This will execute the API call with the provided prompt and print the result in the post window.
