@@ -1,16 +1,12 @@
 MyAPIClass : Object {
 
-    // A class method to call the API with a custom prompt.
-    *getResponse { |prompt|
-        var apiKey, endpoint, jsonBody, cmd, output, parsed, answer;
+    // A class method to call the API asynchronously
+    *getResponseAsync { |prompt, callback|
+        var apiKey, endpoint, jsonBody, cmd;
 
-        // Your API key (this is hidden from your live code display)
         apiKey = "YOUR-API-KEY"; // Replace with your valid API key
-
-        // API endpoint
         endpoint = "https://api.openai.com/v1/chat/completions";
 
-        // Build the JSON request body manually with the dynamic prompt.
         jsonBody = "{" ++
             "\"model\": \"gpt-4o-mini\"," ++
             "\"messages\": [" ++
@@ -19,23 +15,29 @@ MyAPIClass : Object {
             "]" ++
             "}";
 
-        // Construct the curl command
         cmd = "curl -X POST " ++ endpoint ++ " " ++
               "-H \"Content-Type: application/json\" " ++
               "-H \"Authorization: Bearer " ++ apiKey ++ "\" " ++
               "-d '" ++ jsonBody ++ "'";
 
-        // Execute the command and capture its output
-        output = cmd.unixCmdGetStdOut;
+        // Run the curl command asynchronously in a Routine
+        Routine({
+            var output, parsed, answer;
 
-        // Parse the JSON response into a Dictionary
-        parsed = output.parseJSON;
+            // Execute the API call
+            output = cmd.unixCmdGetStdOut;
 
-        // Extract the answer from the parsed JSON
-        answer = parsed["choices"][0]["message"]["content"];
+            // Parse JSON response
+            parsed = output.parseJSON;
 
-        // Print and return the answer
-        answer.postln;
-        ^answer;
+            // Extract the response
+            answer = parsed["choices"][0]["message"]["content"];
+
+            // Print result
+            answer.postln;
+
+            // Run callback function with the result
+            { callback.value(answer) }.defer; // Ensure execution in the main SC thread
+        }).play;
     }
 }
